@@ -35,6 +35,7 @@ mkdir $structural/$case/fast
 mkdir $structural/$case/MNI_transforms
 mkdir $structural/$case/atlases
 mkdir $structural/$case/log_files #Store logfile and intermediate files here.
+log_files=$structural/$case/log_files
 #######################################################################################################
 ## STRUCTURAL DICOM CONVERSION ##
 
@@ -51,16 +52,16 @@ gzip $structural/$case/$case-INV2.nii $structural/$case/$case-INV2.nii.gz
 
 #Create initial mask with BET using INV2
 bet $structural/$case/$case-INV2.nii.gz $structural/$case/$case -m -f 0.2 
-mv -f $structural/$case/$case.nii.gz $structural/$case/log_files/$case.nii.gz
+mv -f $structural/$case/$case.nii.gz $log_files/$case.nii.gz
 #rm -f $structural/$case/$case.nii.gz
 
 #generate final brain mask
 fslmaths $structural/$case/$case-UNI.nii.gz -mul $structural/$case/${case}_mask.nii.gz $structural/$case/$case-UNI.nii.gz
-mv -f $structural/$case/${case}_mask.nii.gz $structural/$case/log_files/${case}_mask.nii.gz
+mv -f $structural/$case/${case}_mask.nii.gz $log_files/${case}_mask.nii.gz
 #rm -f $structural/$case/${case}_mask.nii.gz
 fslmaths $structural/$case/$case-UNI.nii.gz -bin $structural/$case/$case-mask.nii.gz
 fslmaths $structural/$case/$case-mask.nii.gz -ero -kernel sphere 1 $structural/$case/$case-UNI-mask-er.nii.gz
-mv -f $structural/$case/$case-mask.nii.gz $structural/$case/log_files/$case-mask.nii.gz
+mv -f $structural/$case/$case-mask.nii.gz $log_files/$case-mask.nii.gz
 #rm -f $structural/$case/$case-mask.nii.gz
 
 #Apply finalized eroded mask to UNI image
@@ -86,11 +87,11 @@ antsRegistrationSyN.sh -d 3 -f $structural/MNI_Templates/MNI/MNI152_T1_0.8mm_bra
 #######################################################################################################
 #clean up
 
-mv $structural/$case/$case-UNI.nii.gz $structural/$case/log_files/$case-UNI.nii.gz
+mv $structural/$case/$case-UNI.nii.gz $log_files/$case-UNI.nii.gz
 #rm $structural/$case/$case-UNI.nii.gz
-mv $structural/$case/$case-INV2.nii.gz $structural/$case/log_files/$case-INV2.nii.gz 
+mv $structural/$case/$case-INV2.nii.gz $log_files/$case-INV2.nii.gz 
 #rm $structural/$case/$case-INV2.nii.gz 
-mv $structural/$case/*log  $structural/$case/log_files/*log 
+mv $structural/$case/*log  $log_files/*log 
 #rm $structural/$case/*log 
 
 echo -e "\n$case SUCCESFULLY PROCESSED\n\n\n"
