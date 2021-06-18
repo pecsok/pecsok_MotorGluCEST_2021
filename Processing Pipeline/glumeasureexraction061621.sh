@@ -6,13 +6,13 @@
 ## DEFINE PATHS ##
 structural=/project/bbl_projects/MotorGluCEST/structural
 cest=/project/bbl_projects/MotorGluCEST/glucest #path to processed GluCEST data
-outputpath=/project/bbl_projects/MotorGluCEST/sandbox/output_measures
+outputpath=/project/bbl_projects/MotorGluCEST/output_measures
 
 while read line
 do
 case=$line
 mkdir $outputpath/$case
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 #######################################################################################################
 ## Motor NETWORK MEASURE EXTRACTION ##
 
@@ -30,8 +30,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-MotorNetwork-GluCEST-measures.
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-MotorNetwork-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-MotorNetwork-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-MotorNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
-
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #Motor Network (Figure XX): Gray Matter Density
 #touch $outputpath/GMDensity-ho-MotorNetwork-Measures.tsv
@@ -46,7 +45,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-MotorNetwork-GMDensity-measure
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-MotorNetwork-GMDensity-measures.tsv
 #enter participant GM density data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-MotorNetwork-GMDensity-measures.tsv >> $outputpath/GMDensity-ho-MotorNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #Motor Network: M1 (Figure XX): GluCEST Contrast
 #touch $outputpath/GluCEST-ho-MotorNetwork-M1-Measures.tsv
@@ -61,7 +60,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-MotorNetwork-M1-GluCEST-measur
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-MotorNetwork-M1-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-MotorNetwork-M1-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-MotorNetwork-M1-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #Motor Network: SMA Component (Figure XX): GluCEST Contrast
 #touch $outputpath/GluCEST-ho-MotorNetwork-SMA-Measures.tsv
@@ -76,7 +75,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-MotorNetwork-SMA-GluCEST-measu
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-MotorNetwork-SMA-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-MotorNetwork-SMA-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-MotorNetwork-SMA-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 # #######################################################################################################
 ## NON-Motor MEASURE EXTRACTION ##
 #Visual Network Regions (Figure 4): GluCEST Contrast
@@ -92,7 +91,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-VisualNetwork-GluCEST-measures
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-VisualNetwork-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-VisualNetwork-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-VisualNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #All Non-Motor Brain Regions (Figure 4): GluCEST Contrast
 #touch $outputpath/GluCEST-ho-NonMotor-Measures.tsv
@@ -107,7 +106,7 @@ cut -f2-3 --complement $outputpath/$case/$case-ho-NonMotor-GluCEST-measures.tsv 
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-NonMotor-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-ho-NonMotor-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-NonMotor-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 #######################################################################################################
 ## Schaefer100 Atlas
 
@@ -124,7 +123,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-MotorNetwork-GluCEST-measure
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-MotorNetwork-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-MotorNetwork-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-MotorNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #s100 Motor Network (Figure XX): Gray Matter Density
 #touch $outputpath/GMDensity-s100-MotorNetwork-Measures.tsv
@@ -139,7 +138,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-MotorNetwork-GMDensity-measu
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-MotorNetwork-GMDensity-measures.tsv
 #enter participant GM density data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-MotorNetwork-GMDensity-measures.tsv >> $outputpath/GMDensity-s100-MotorNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #S100 Motor Network: SomMotA (Figure 4): GluCEST Contrast ****STILL PROBLEMS
 #touch $outputpath/GluCEST-s100-MotorNetwork-SomMotA-Measures.tsv
@@ -154,7 +153,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-MotorNetwork-SomMotA-GluCEST
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-MotorNetwork-SomMotA-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-MotorNetwork-SomMotA-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-MotorNetwork-SomMotA-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #S100 Motor Network: SomMotB (Figure 4): GluCEST Contrast
 #touch $outputpath/GluCEST-s100-MotorNetwork-SomMotB-Measures.tsv
@@ -169,7 +168,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-MotorNetwork-SomMotB-GluCEST
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-MotorNetwork-SomMotB-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-MotorNetwork-SomMotB-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-MotorNetwork-SomMotB-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 # #######################################################################################################
 ## NON-Motor MEASURE EXTRACTION ##
@@ -187,7 +186,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-VisualNetwork-GluCEST-measur
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-VisualNetwork-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-VisualNetwork-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-VisualNetwork-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 #All Non-Motor Brain Regions (Figure 4): GluCEST Contrast
 #touch $outputpath/GluCEST-s100-NonMotor-Measures.tsv
@@ -202,7 +201,7 @@ cut -f2-3 --complement $outputpath/$case/$case-s100-NonMotor-GluCEST-measures.ts
 mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-NonMotor-GluCEST-measures.tsv
 #enter participant GluCEST contrast data into master spreadsheet
 sed -n "2p" $outputpath/$case/$case-s100-NonMotor-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-NonMotor-Measures.tsv
-done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 
 
 # #######################################################################################################
@@ -223,7 +222,7 @@ done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-Pas
 # mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-ho-MotorNetwork-Heatmap50-GluCEST-measures.tsv
 # #enter participant GluCEST contrast data into master spreadsheet
 # sed -n "2p" $outputpath/$case/$case-ho-MotorNetwork-Heatmap50-GluCEST-measures.tsv >> $outputpath/GluCEST-ho-MotorNetwork-Heatmap50-Measures.tsv
-# done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+# done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 # #######################################################################################################
 # # Sensitivity Analysis ##
 #
@@ -242,5 +241,5 @@ done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-Pas
 # mv $outputpath/$case/tmp.tsv $outputpath/$case/$case-s100-MotorNetwork-Heatmap50-GluCEST-measures.tsv
 # #enter participant GluCEST contrast data into master spreadsheet
 # sed -n "2p" $outputpath/$case/$case-s100-MotorNetwork-Heatmap50-GluCEST-measures.tsv >> $outputpath/GluCEST-s100-MotorNetwork-Heatmap50-Measures.tsv
-# done < /project/bbl_projects/MotorGluCEST/sandbox/Rscripts/SCANID-Timepoint1-PassQC.csv
+# done < /project/bbl_projects/MotorGluCEST/dicoms_caselist.csv
 # #######################################################################################################
