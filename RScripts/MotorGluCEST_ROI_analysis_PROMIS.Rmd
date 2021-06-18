@@ -1,0 +1,225 @@
+---
+title: "MotorGluCEST_ROI_analysis"
+author: "Maggie Pecsok"
+date: "6/4/2021"
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+    toc: yes
+    toc_depth: '5'
+theme: cerulean
+geometry: margin=1.9cm
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/project/bbl_projects/MotorGluCEST/sandbox") 
+#knitr::opts_knit$set(root.dir = "/Users/roalflab/Documents/MotorGluCEST/OutputMeasures/") 
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=65),tidy=TRUE)
+library(plyr)
+library(dplyr)
+library(knitr)
+library(reader)
+library(kableExtra)
+library(ggplot2)
+library(ppcor)
+setwd("/project/bbl_projects/MotorGluCEST/sandbox/output_measures3")
+```
+
+\newpage
+
+```{r include=FALSE}
+#read in sample demographics and clinical measures
+glucest <- read.csv("/project/bbl_projects/MotorGluCEST/sandbox/GLUCEST-Clinical-Demographics-Measures-N45.csv", header=TRUE) #csv created by Prepare_Demographics_ClinicalMeasures_Data.Rmd
+```
+
+
+```{r include=FALSE}
+#Read in GluCEST % Contrast Measures, GM Density Measures, and Motor Network Coverage Measures
+#list all .csv files in root directory
+#files <- list.files(path="/Users/roalflab/Documents/MotorGluCEST/OutputMeasures", pattern='.csv', ignore.case=T, full.names = F) 
+files <- list.files(path="/project/bbl_projects/MotorGluCEST/sandbox/output_measures/", pattern='.tsv', ignore.case=T, full.names = F) 
+filenames <- c()
+#generate variable names to assign file data to 
+for(name in files){
+  #remove "-Measures.tsv"" from end of filename
+  Rname <- gsub('.{13}$', '', name)
+  #replace - with _ for R compatibility 
+  Rname <- chartr(old = "-", new = "_", Rname) 
+  #save filenames into a character vector 
+  filenames <- append(filenames, Rname) 
+}
+#read in files and assign to variables
+for(i in 1:12){
+  #save filename as an individual string
+  Rfilename <- sprintf("%s",filenames[i]) 
+  #read in csv data for each file
+  x <- read.delim(files[i], header=TRUE, sep='\t') 
+  #assign csv data to Rfilename string 
+  assign(Rfilename, x) 
+}
+rm(x)
+```
+
+\newpage
+
+# Motor Network GluCEST v. Non-Motor GluCEST and RR 
+
+**Multiple Linear Regression**
+```{r}
+#Temporary fix!!! 
+glucest <- glucest[ !(glucest$bblid %in% c("125073","132179")),]
+#linear regression with age, sex, Motor Network GluCEST and Non-Motor GluCEST predicting BAS RR
+summary(lm(glucest$PROMIS_totalscore ~ GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean + GluCEST_ho_NonMotor$NonMotor_CEST_mean + glucest$age_scan + glucest$sex))
+```
+
+**Motor Network Partial R**
+```{r}
+covariates <- data.frame(GluCEST_ho_NonMotor$NonMotor_CEST_mean, glucest$age_scan, glucest$sex)
+pcor.test(glucest$PROMIS_totalscore, GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean, covariates)$estimate
+```
+
+**Non-Motor Network Partial R**
+```{r}
+covariates <- data.frame(GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean, glucest$age_scan, glucest$sex)
+pcor.test(glucest$PROMIS_totalscore, GluCEST_ho_NonMotor$NonMotor_CEST_mean, covariates)$estimate
+```
+
+
+**Motor Network Association Plot (Figure 2)**
+```{r echo=TRUE}
+plotdata <- data.frame(glucest$PROMIS_totalscore, GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean, )
+jpeg("/project/bbl_projects/MotorGluCEST/sandbox/Figures/Images/PROMIS_MotorNetworkTotal_CorrelationPlot_ColoredbyGroup.jpg", units="in", width=7.3, height=6.6, res=800)
+PROMIS_MotorNetworkTotal_CorrelationPlot <- ggplot(plotdata, aes(x=glucest$PROMIS_totalscore, y=GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean, fill=as.factor(glucest$Diagnosis_NC_MDD_Psy_Coded))) +
+  geom_point(color = "black", shape=21, size=3) +
+  labs(x="\nPROMIS Score\n", y="\nGluCEST % Contrast\n") +
+  ggtitle("\n") +
+  geom_smooth(method='lm', se=TRUE, fill=alpha(c("#ad0000"),.2), col="black") +
+  theme(legend.title=element_blank()) +
+  scale_y_continuous(breaks=c(6.5,7,7.5,8,8.5,9)) +
+  scale_fill_manual(values=c(rgb(116,3,5,maxColorValue=255,alpha=255),
+                             rgb(239,162,164,maxColorValue=255, alpha=255),
+                             rgb(196,36,40,maxColorValue=255, alpha=255)),
+                             labels=c("TD","DEP","PSY")) +
+  theme(
+    axis.title.x=element_text(family="Arial", vjust=0.5, size=17),
+    axis.title.y=element_text(family="Arial",  size=17),
+    axis.line = element_line(colour = "black"),
+    axis.text=element_text(family="Arial",size=18),
+    panel.background=element_blank(),
+    axis.text.x = element_text(color="black"),
+    axis.text.y = element_text(color="black"),
+    legend.title=element_blank(), 
+    legend.text=element_text(size=14, family="Arial"),
+    legend.key = element_rect(fill = NA, colour = NA),
+    legend.position="top", 
+    legend.justification="left",
+    legend.direction="horizontal")
+PROMIS_MotorNetworkTotal_CorrelationPlot
+ggsave("PROMIS_MotorNetworkTotal_CorrelationPlot.jpg")
+```
+
+**Motor Network GluCEST Between Typically Developing and Clinical Groups**
+```{r}
+summary(aov(GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean ~ glucest$age_scan + glucest$sex + as.factor(glucest$Control_Coded)))
+```
+
+**Motor Network GluCEST and RR Association in Males v. Females (Interaction Effect for Sex)**
+```{r}
+#linear regression between GluCEST and RR controlling for age and including an interaction effect for sex
+data <- data.frame(glucest$PROMIS_totalscore, glucest$age_scan, glucest$sex, GluCEST_ho_MotorNetwork$MotorNetwork_CEST_mean)
+data$glucest.sex <- as.factor(data$glucest.sex)
+contrasts(data$glucest.sex) <- c(-.5,.5)
+summary(lm(glucest.PROMIS_totalscore ~ (GluCEST_ho_MotorNetwork.MotorNetwork_CEST_mean)*(glucest.sex) + glucest.age_scan, data=data))
+```
+
+\newpage
+
+# Motor Network Anatomical Subdivision: Cortical and Subcortical GluCEST and RR
+
+## Non-Motor Network
+
+**Multiple Linear Regression**
+```{r}
+#linear regression between GluCEST and RR controlling for age and sex
+summary(lm(glucest$PROMIS_totalscore ~ GluCEST_ho_NonMotor$NonMotor_CEST_mean + glucest$age_scan + glucest$sex))
+```
+
+**Partial R**
+```{r}
+covariates <- data.frame(glucest$age_scan, glucest$sex)
+pcor.test(GluCEST_ho_VisualNetwork$Visual_CEST_mean, glucest$PROMIS_totalscore, covariates)$estimate
+```
+
+## Visual Network
+
+**Multiple Linear Regression**
+```{r}
+#linear regression between GluCEST and RR controlling for age and sex
+summary(lm(glucest$PROMIS_totalscore ~ GluCEST_ho_VisualNetwork$Visual_CEST_mean + glucest$age_scan + glucest$sex))
+```
+
+**Partial R**
+```{r}
+covariates <- data.frame(glucest$age_scan, glucest$sex)
+pcor.test(GluCEST_ho_VisualNetwork$Visual_CEST_mean, glucest$PROMIS_totalscore, covariates)$estimate
+```
+
+**Subcortical Motor Network Association Plot (Figure 3)**
+```{r}
+plotdata <- data.frame(glucest$PROMIS_totalscore, GluCEST_ho_VisualNetwork$Visual_CEST_mean, glucest$Diagnosis_NC_MDD_Psy_Coded)
+decimalscale <- function(x) sprintf("%.1f", x)
+jpeg("/project/bbl_projects/MotorGluCEST/sandbox/Figures/Images/PROMIS_VisualNetworkTotal_CorrelationPlot_ColoredbyGroup.jpg", units="in", width=7.3, height=6.6, res=800)
+PROMIS_VisualNetworkTotal_CorrelationPlot <- ggplot(plotdata, aes(x=glucest$PROMIS_totalscore, y=GluCEST_ho_VisualNetwork.Visual_CEST_mean, fill=as.factor(glucest$Diagnosis_NC_MDD_Psy_Coded))) +
+  geom_point(color = "black", shape=21, size=3) +
+  labs(x="\nBAS Motor Responsiveness Score\n", y="\nGluCEST % Contrast\n") +
+  ggtitle("\n") +
+  geom_smooth(method='lm', se=TRUE, fill=alpha(c("gold"),.7), col="black") +
+  theme(legend.title=element_blank()) +
+  scale_y_continuous(breaks=c(6.0,7.0,8.0,9.0, 10.0, 11.0), labels=decimalscale) +
+  scale_fill_manual(values=c(rgb(250,230,202,maxColorValue=255, alpha=255),
+                             rgb(230,204,237,maxColorValue=255,alpha=255),
+                             rgb(255,224,74,maxColorValue=255, alpha=255)),
+                    labels=c("TD","DEP","PSY")) +
+  theme(
+    axis.title.x=element_text(family="Arial", vjust=0.5, size=17),
+    axis.title.y=element_text(family="Arial",  size=17),
+    axis.line = element_line(colour = "black"),
+    axis.text=element_text(family="Arial",size=18),
+    panel.background=element_blank(),
+    axis.text.x = element_text(color="black"),
+    axis.text.y = element_text(color="black"),
+    legend.title=element_blank(), 
+    legend.text=element_text(size=14, family="Arial"),
+    legend.key = element_rect(fill = NA, colour = NA),
+    legend.position="top", 
+    legend.justification="left",
+    legend.direction="horizontal")
+PROMIS_VisualNetworkTotal_CorrelationPlot
+ggsave("PROMIS_VisualNetworkTotal_CorrelationPlot.jpg")
+```
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
