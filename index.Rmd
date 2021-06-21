@@ -44,18 +44,18 @@ The steps below detail how to replicate all aspects of this project, from neuroi
 1. Generate B0 maps, B1 maps, and B0- and B1-corrected GluCEST maps with the Matlab Program cest2d_TERRA_SYRP (in-house software).
 <br>
 <br>
-2. Run [/Processing_Pipeline/MP2RAGE_Processing_Pipeline.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Processing_Pipeline/MP2RAGE_Processing_Pipeline.sh) to process raw 7T Terra MP2RAGE structural data.
+2. Run [/Processing_Pipeline/structural_script.sh](LINK TO SCRIPT ON GITHUB) to process raw 7T Terra MP2RAGE structural data.
 
-    > This script executes the following: UNI and INV2 dicom to nifti conversion, structural brain masking, ANTS N4 bias field correction, FSL FAST     (for tissue segmentation and gray matter probability maps), UNI to MNI registration with ANTS SyN (rigid+affine+deformable syn)
+    > This script executes the following: UNI and INV2 dicom to nifti conversion, structural brain masking, ANTS N4 bias field correction, FSL FAST (for tissue segmentation and gray matter probability maps), UNI to MNI registration with ANTS SyN (rigid+affine+deformable syn). Note, our major update was to use a 4-compartment FAST segmentation based on UNI file, vs. 3-compartment based on INV-2 file.
 <br>
-3. Run [/Processing_Pipeline/GluCEST_Processing_Pipeline.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Processing_Pipeline/GluCEST_Processing_Pipeline.sh) to process the 7T Terra GluCEST data output by cest2d_TERRA_SYRP.
+3. Run [/Processing_Pipeline/glucest_script.sh](LINK TO SCRIPT ON GITHUB) to process the 7T Terra GluCEST data output by cest2d_TERRA_SYRP.
 
     > This script executes the following: dicom to nifti conversion for Matlab generated B0 maps, B1 maps, and B0B1-corrected GluCEST dicoms, B0        and B1 map thresholding of GluCEST images, CSF removal from GluCEST images, GluCEST brain masking, registration of atlases from MNI space to        participant UNI images, registration of FAST segmentation and reward atlas slices to GluCEST images, generation of reward network anatomical        and valence-encoding subcomponent masks
 <br>
-4. Run [/Processing_Pipeline/RewardNetwork_Heatmap.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Processing_Pipeline/RewardNetwork_Heatmap.sh) to generate a reward network map that only includes voxels for which greater than 50% of participants had GluCEST data (used for coverage sensitivity analysis).
+4. Run [/Processing_Pipeline/motor_heatmap.sh](LINK TO SCRIPT) to generate a reward network map that only includes voxels for which greater than 50% of participants had GluCEST data (used for coverage sensitivity analysis).
 
 ### Measure Extraction
-1. Execute [/Measure_Extraction/GluCEST_Measure_Extraction.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Measure_Extraction/GluCEST_Measure_Extraction.sh) to calculate GluCEST % contrast and gray matter density measures for each subject in all masks of interest.
+1. Execute [/Measure_Extraction/glumeasureexraction061621.sh](LINK TO SCRIPT) to calculate GluCEST % contrast and gray matter density measures for each subject in all masks of interest.
 
     > This script calculates the average GluCEST % contrast in the total reward network (Figure 2), reward network cortical and subcortical             components (Figure 3), reward network appetitive, aversive, and salience subcomponents (Figure 4), non-reward cortex (Figure 4), and reward         network anatomical subdivisions (Supplementary Figure S1). It additionally calculates average gray matter density in the total reward               network
 <br>
@@ -65,7 +65,7 @@ The steps below detail how to replicate all aspects of this project, from neuroi
 3. Execute [/Measure_Extraction/HMRSVOI_Coverage_CESTspace.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Measure_Extraction/HMRSVOI_Coverage_CESTspace.sh) to process the HMRS VOI and align it to GluCEST space. Next run [Measure_Extraction/HMRSVOI_CEST_Measure_Extraction.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Measure_Extraction/HMRSVOI_CEST_Measure_Extraction.sh) to calculate the average GluCEST % contrast within the total HMRS VOI, as well as within reward and non-reward VOI components. Finally, run [Measure_Extraction/HMRSVOI_Coverage_MP2RAGEspace.sh](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/Measure_Extraction/HMRSVOI_Coverage_MP2RAGEspace.sh) to calculate the percent of the HMRS VOI that is occupied by reward network versus non-reward cortex.
 
 ### Statistical Analysis and Figure Generation 
-1. Knit [/R_Statistics/Prepare_Demographics_ClinicalMeasures_Data.Rmd](https://github.com/PennLINC/sydnor_glucest_rewardresponsiveness_2020/blob/master/R_Statistics/Prepare_Demographics_ClinicalMeasures_Data.Rmd).
+1. Knit [/R_Statistics/Prepare_Demographics_ClinicalMeasures_Data.Rmd](LINK TO SCRIPTS).
 
     > This script first reads in clinical (RedCap) data, isolates self-report scales, and calculates Behavioral Activation System (BAS) Scale           Reward Responsiveness scores, BAS Drive scores, BAS Fun Seeking scores, PROMIS Depression scores, and PRIME Screen-Revised scores. It next         reads in participant demographics and image quality assurance check results, and identifies the final study sample by 1) including only             timepoint 1 imaging data, 2) including only participants with GluCEST data that passed all QC checks, and 3) excluding participants missing         clinical (or GluCEST) data. It then generates the final study sample (SCANID-Timepoint1-PassQC.csv) and writes out a master clinical and           demographic spreadsheet for this sample. Note, this R script calls the shell script extract_sample_7TClinicalMeasures.sh
 <br>
